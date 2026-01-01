@@ -1,0 +1,151 @@
+{0 Chrestomathy}
+
+{1 Ada}
+
+- specializes for macOS by having the Makefile alter a constant in [build_options.ads] with Perl after checking [uname]
+- does a style check with [gnatpp] which... usually just causes a build failure, because [gnatpp] isn't part of the normal GNAT distribution.
+- checks [getrusage(2)] constants with a C program that asserts Ada's understanding
+- for comfortable editing, needs project spellings/case in [dict]
+- nine [with] module imports, and four [use] module inclusions.
+- [struct rusage], [getrusage], [posix_spawn], [waitpid], are all tediously (but exactly) handled with C FFI and without writing C.
+- unbuffered I/O
+- bare "syscall failed" error messages
+
+I don't entirely hate this code.
+
+{1 ATS}
+
+- C wrapping is nicer than every alternative, very precisely describing C resource use with very little code.
+- but also inlines a large chunk of C just to have less painful output
+- otherwise this code is not showing ATS off at all
+
+{1 C}
+
+C has the easiest time of this task and still mostly shows off C's
+disadvantages, with subtle bugs and unchecked errors.
+
+{1 D}
+
+This D isn't taking advantage of ImportC or interpolated strings but is still fairly clean.
+
+{1 Forth}
+
+- requires a [.so] and cheats a bit with FFI
+- unbuffered I/O, though easily fixed
+- uniquely bad in that units aren't changed
+
+Overall, poor code. There's a serious cognitive cost from Forth and here
+there's no benefit to compensate for that.
+
+{1 Mercury}
+
+Overcomplicated (by me) with state variables, and the FFI's somewhat gross, but
+there's a lot to like about the code. It's not accidental that this version has
+so many features.
+
+Mainly, it looks bad. Pattern-matching, records, the syntax in general compares
+very unfavorably to OCaml.
+
+{1 Nim}
+
+- some gratuitously bad style from me: global state, a meaningless
+  [isMainModule], weird C [emit] abuse. In these terms even Ada does better.
+- nonetheless very clean-looking and maintainable code, having interpolation as
+  an advantage over standard OCaml.
+
+{1 OCaml}
+
+- the first version had pretty ugly output with 14 arguments to
+  [Printf.printf], including a single giant format string. Breaking that up or
+  using {{: https://github.com/EmileTrotignon/ppx_format}ppx_format} helped a lot.
+- unique in that it uses a separate C stub that uses the OCaml compiler API.
+- unique in that [Stdlib] argument handling could still be used with [getr]'s
+  CLI that passes arbitrary flags onto the spawned commands.
+- unique (with Forth) in having reasonable interactive development with [dune
+  utop].
+- opinions vary but I quite like dune, and prefer it to cargo.
+- I like odoc, too. Of these languages only Rust and go have reasonable
+  competition.
+
+{1 Rust}
+
+{@rust[
+fn exe() -> Option<String> {
+    Some(std::env::current_exe().ok()?.file_name()?.to_str()?.to_string())
+}
+]}
+
+I don't entirely hate this either.
+
+{1 Lines of Code}
+
+{t
+  | Language | LoC | Features |
+  | :------: | ---:|:---------|
+  | Ada      | 169 | macOS port |
+  | ATS      | 62  |          |
+  | C        | 87  | non-linux port? |
+  | D        | 79  |          |
+  | Forth    | 74  | (no units) |
+  | Go       | 74  |          |
+  | Mercury  | 346 | macOS port, -b, -i, fork&exec option |
+  | Nim      | 102 | macOS port, -b |
+  | OCaml    | 149 | macOS port, -b, -i |
+  | Rust     | 107 |          |
+}
+
+{1 Run Times}
+
+Times from the difference of [getr 1 getr.lang 1000 /bin/true].
+
+{t
+  | Language | Run Time | Max RSS |
+  | :------: | --------:| -------:|
+  | Ada      | 80 ms    | 4.5 MB  |
+  | C        | 102 ms   | 3.4 MB  |
+  | D        | 369 ms   | 6.0 MB  |
+  | Forth    | 122 ms   | 5.0 MB  |
+  | Go       | 274 ms   | 7.1 MB  |
+  | Mercury  | 129 ms   | 6.4 MB  |
+  | Nim      | 913 ms   | 4.5 MB  |
+  | OCaml    | 86 ms    | 3.5 MB  |
+  | Rust     | 100 ms   | 3.1 MB  |
+}
+
+{1 Compile Times}
+
+Times from a cold release build with the generally recommended build system,
+which hurts D and Nim - both get under 3 s with direct compiler use.  ATS
+skipped as I couldn't easily build it (and only the argv handling is
+interesting at all).
+
+Times are wallclock, which helps Go (22.7s compile time by user+sys).
+
+{t
+  | Language | Compile Time | Compile MaxRSS | Compiler | Source |
+  | :------: | ------------:| --------------:| --------:| ------:|
+  | Ada      | 758 ms       | 52.2 MB        | GNAT 15.2.1 | {{: https://github.com/jrfondren/getr-ada}getr-ada} |
+  | C        | 124.5 ms     | 31.1 MB        | gcc 15.2.1 | {{: https://github.com/jrfondren/getr-mercury}getr} |
+  | D        | 7.5 s        | 240.9 MB       | ldc 1.44.0 | {{: https://github.com/jrfondren/getr-d}getr-d} |
+  | Forth    | 96.9 ms      | 24.8 MB        | gcc for the .so | {{: https://github.com/jrfondren/getr-forth}getr-forth} |
+  | Go       | 6.3s         | 217.6 MB       | 1.25.5 | translated |
+  | Mercury  | 6.4 s        | 108.3 MB       | rotd-2024-05-18 | {{: https://github.com/jrfondren/getr-mercury}getr-mercury} |
+  | Nim      | 13.8 s       | 89.1 MB        | 2.2.4 | {{: https://github.com/jrfondren/getr-nim}getr-nim} |
+  | OCaml    | 849 ms       | 39.7 MB        | 5.4.0 | {{: https://github.com/jrfondren/getr-ocaml}getr-ocaml} |
+  | Rust     | 9.3 s        | 187.9 MB       | 1.94.0-nightly | {{: https://github.com/jrfondren/getr-rust}getr-rust} |
+}
+
+{1 Conclusion}
+
+{{: https://ocaml.org/about}Why OCaml?} provides an argument for OCaml that
+isn't very satisfying to the zeitgeist: it doesn't establish a niche or a
+unique selling point. It says "sweet spot", "combination ... that is
+unmatched", "elegant combination", etc. But this is also my conclusion from
+these implementations.
+
+Ada, Mercury, Rust, and Zig (not included due to its instability) all pay a
+very large price in clarity and maintainability for both small and dubious
+benefits. C, D, Forth, Go, and Nim all pay a price in developer confidence for
+small and dubious benefits in developer ease.
+
+Design decisions come with costs and OCaml bears its costs relatively well.

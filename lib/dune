@@ -1,0 +1,7 @@
+(library
+ (name getr)
+ (public_name getr)
+ (foreign_stubs
+  (language c)
+  (names getrusage))
+ (libraries unix))
