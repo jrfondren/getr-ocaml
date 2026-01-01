@@ -60,12 +60,7 @@ If any spawned processes return with a non-zero status code, `getr` prints a mes
 ## Installing
 
 ```bash
-# one-shot-ly
-$ opam install git+https://github.com/jrfondren/getr-ocaml
-
-# persistently, if you want to see (unlikely) upgrades
-$ opam pin add getr https://github.com/jrfondren/getr-ocaml
-$ opam install getr
+$ opam pin add getr https://github.com/jrfondren/getr-ocaml.git
 
 # optimistically, will work if I publish this
 $ opam install getr
