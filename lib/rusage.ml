@@ -1,4 +1,5 @@
 type t = {
+  wall_time : float;
   user_time : float;
   system_time : float;
   max_rss : float;
@@ -12,9 +13,10 @@ type t = {
 
 external get_helper : unit -> float array = "getrusage_helper"
 
-let get () =
+let get before =
   let a = get_helper () in
   {
+    wall_time = Unix.gettimeofday () -. before;
     user_time = a.(0);
     system_time = a.(1);
     max_rss = a.(2);

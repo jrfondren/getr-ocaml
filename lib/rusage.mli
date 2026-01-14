@@ -1,6 +1,7 @@
 (** Resource usage stats with [getrusage()] *)
 
 type t = {
+  wall_time : float;  (** added data; not part of getrusage() *)
   user_time : float;  (** seconds +. microseconds /. 1e6 *)
   system_time : float;  (** seconds +. microseconds /. 1e6 *)
   max_rss : float;  (** KB *)
@@ -12,5 +13,5 @@ type t = {
   invol_ctx : float;
 }
 
-val get : unit -> t
-(** perform a [getrusage()] syscall for [RUSAGE_CHILDREN] *)
+val get : float -> t
+(** [get start_time] performs a [getrusage()] syscall for [RUSAGE_CHILDREN] *)

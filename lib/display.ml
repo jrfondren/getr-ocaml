@@ -9,6 +9,7 @@ let report mode runs (ru : Rusage.t) =
   | Normal ->
     let p = Printf.fprintf in
     let e = Out_channel.stderr in
+    p e "Real time      : %a\n" Units.pp_seconds ru.wall_time;
     p e "User time      : %.4f s\n" ru.user_time;
     p e "System time    : %.4f s\n" ru.system_time;
     p e "Time           : %a (%.3f ms/per)\n" Units.pp_seconds time ms_per;

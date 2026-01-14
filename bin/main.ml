@@ -41,5 +41,6 @@ let input, mode =
     exit 1
 
 let () =
+  let before = Unix.gettimeofday () in
   Spawn.spawns ~input cmd args runs;
-  Display.report mode runs (Rusage.get ())
+  Display.report mode runs (Rusage.get before)
