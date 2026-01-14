@@ -31,7 +31,7 @@ child (pid 13728 run 1) failed with exit status 1
 
 $ echo -e "1\n2\n3" > input
 $ dune exec getr -- -b=4 -i=input 2 perl -lpe 's/^/!! /; END { print "" }'
-!! 1                                
+!! 1
 !! 2
 !! 3
 
@@ -53,9 +53,9 @@ If any spawned processes return with a non-zero status code, `getr` prints a mes
 
 ## Modules
 
-`Getr.Rusage` 
-`Getr.Spawn` 
-`Getr.Display` 
+`Getr.Rusage`
+`Getr.Spawn`
+`Getr.Display`
 
 ## Installing
 
