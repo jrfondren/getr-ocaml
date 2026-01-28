@@ -6,15 +6,15 @@ let check_exit run = function
   | pid, Unix.WEXITED n ->
     Printf.fprintf Out_channel.stderr
       "child (pid %d run %d) failed with exit status %d\n" pid run n;
-    exit n
+    raise Exit
   | pid, Unix.WSIGNALED _ ->
     Printf.fprintf Out_channel.stderr
       "child (pid %d run %d) failed with signal\n" pid run;
-    exit 1
+    raise Exit
   | pid, Unix.WSTOPPED _ ->
     Printf.fprintf Out_channel.stderr
       "child (pid %d run %d) stopped with signal\n" pid run;
-    exit 1
+    raise Exit
 
 let spawns ~input cmd args runs =
   match input with
