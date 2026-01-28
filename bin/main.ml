@@ -3,8 +3,7 @@ open Getr
 let usage_line = "[-i=<input>] [-b=<ref ms>] <runs> <command> [<args> ..]"
 
 let usage msg =
-  Printf.fprintf Out_channel.stderr "%susage: %s %s\n" msg Sys.argv.(0)
-    usage_line;
+  Printf.eprintf "%susage: %s %s\n" msg Sys.argv.(0) usage_line;
   exit 1
 
 let argv, runs, cmd, args =
@@ -37,7 +36,7 @@ let input, mode =
       ("getr " ^ usage_line);
     !input, !mode
   with Arg.Bad msg ->
-    Printf.fprintf Out_channel.stderr "%s" msg;
+    Printf.eprintf "%s" msg;
     exit 1
 
 let () =
